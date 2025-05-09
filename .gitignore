@@ -10,7 +10,6 @@ yt-dlp.exe
 # Pastas de build
 build/
 dist/
-*.spec
 
 # Arquivos do sistema
 .DS_Store
