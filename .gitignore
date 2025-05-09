@@ -1,0 +1,17 @@
+# Arquivos Python compilados
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos grandes que podem ser baixados pelo usuário
+ffmpeg.exe
+yt-dlp.exe
+
+# Pastas de build
+build/
+dist/
+*.spec
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
