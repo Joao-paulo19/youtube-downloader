@@ -6,7 +6,6 @@ __pycache__/
 # Arquivos grandes que podem ser baixados pelo usuário
 ffmpeg.exe
 yt-dlp.exe
-screenshot.png
 
 # Pastas de build
 build/
