@@ -1,7 +1,7 @@
 # YouTube Downloader
 Uma aplicação desktop portátil para download de vídeos e áudios do YouTube, com interface gráfica amigável e sistema robusto de tratamento de erros.
 
-![Screenshot da aplicação](screenshot.png)
+![Screenshot da aplicação](screenshot1.png)
 
 ## 🌟 Recursos
 - 📹 Download de vídeos em múltiplas qualidades (1080p, 720p, 480p, etc.)
