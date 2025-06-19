@@ -5,16 +5,18 @@ Uma aplicação desktop portátil para download de vídeos e áudios do YouTube,
 
 ## 🌟 Recursos
 - 📹 Download de vídeos em múltiplas qualidades (1080p, 720p, 480p, etc.)
-- 🎵 Extração de áudio em diferentes formatos (MP3, M4A, etc.)
+- 🎵 Extração de áudio em diferentes formatos (MP3, M4A, WAV, OPUS, FLAC)
 - 🔄 Conversão entre formatos de áudio
 - 📂 Seleção personalizada de pastas de destino
 - 📊 Barra de progresso em tempo real
-- 💻 Interface intuitiva e amigável
+- 💻 Interface intuitiva com abas organizadas
 - 📦 Aplicação completamente portátil
 - 🛡️ Sistema robusto de tratamento de erros
-- 📝 Logging detalhado para debugging
+- 🔍 Detecção automática de downloads duplicados
 - ✅ Validação automática de dependências
 - 🔒 Validação de URLs para segurança
+- ❌ Cancelamento de downloads em andamento
+- 📝 Relatórios detalhados de falhas específicas do YouTube
 
 ## 📋 Pré-requisitos
 **Para desenvolvimento:**
@@ -57,22 +59,29 @@ O executável será criado na pasta `dist/YouTube Downloader/`.
 ### Download de Vídeos
 1. Insira a URL do vídeo do YouTube (a aplicação valida automaticamente)
 2. Selecione "Vídeo" como modo de download
-3. Escolha a qualidade de vídeo desejada
+3. Escolha a qualidade de vídeo desejada na aba "Download de Vídeo"
 4. Selecione a pasta de destino (permissões são verificadas automaticamente)
 5. Clique em "Baixar"
 
 ### Download de Áudio
 1. Insira a URL do vídeo do YouTube
 2. Selecione "Áudio" como modo de download
-3. Escolha a qualidade e o formato de áudio desejados
+3. Na aba "Download de Áudio", escolha:
+   - Qualidade do áudio (Melhor qualidade, 320kbps, 256kbps, etc.)
+   - Formato de saída (mp3, m4a, wav, opus, flac)
 4. Selecione a pasta de destino
 5. Clique em "Baixar"
 
 ### Conversão de Áudio
 1. Navegue até a aba "Conversão de Áudio"
 2. Selecione o arquivo de áudio de origem
-3. Escolha o formato de saída desejado
+3. Escolha o formato de saída desejado (mp3, m4a, wav, opus, flac, aac)
 4. Clique em "Converter" (timeout automático de 5 minutos para segurança)
+
+### Gerenciamento de Downloads
+- **Cancelamento**: Use o botão "Cancelar" para interromper downloads em andamento
+- **Progresso**: Acompanhe o progresso em tempo real através da barra de progresso
+- **Duplicatas**: A aplicação detecta automaticamente downloads duplicados e oferece opções
 
 ## 🛡️ Sistema de Segurança e Robustez
 ### Validações Automáticas
@@ -80,18 +89,33 @@ O executável será criado na pasta `dist/YouTube Downloader/`.
 - **URLs**: Validação se a URL é realmente do YouTube
 - **Permissões**: Verificação de acesso de escrita na pasta de destino
 - **Arquivos**: Confirmação se os arquivos foram criados com sucesso
+- **Duplicatas**: Detecção de vídeos já baixados com confirmação do usuário
 
 ### Tratamento de Erros
 - **FileNotFoundError**: Dependências não encontradas
 - **PermissionError**: Problemas de permissão de arquivo/pasta
 - **TimeoutExpired**: Downloads ou conversões que excedem o tempo limite
 - **subprocess.CalledProcessError**: Erros de execução das ferramentas
+- **Erros específicos do YouTube**: Vídeos privados, removidos, bloqueados regionalmente, etc.
 
-### Sistema de Logs
-- Logs salvos automaticamente em `~/Downloads/YouTubeDownloader_Logs/`
-- Registro detalhado de operações e erros
-- Facilita debugging e suporte técnico
-- Histórico completo de downloads realizados
+### Relatórios de Falhas
+- **Detecção inteligente**: Identifica problemas específicos do YouTube (vídeos privados, removidos, bloqueados)
+- **Relatórios detalhados**: Janela com scroll para listas longas de falhas
+- **Informações completas**: Título do vídeo, motivo da falha e horário
+- **Continuidade**: Downloads continuam mesmo com falhas individuais em playlists
+
+## ⚠️ Limitações Conhecidas
+### Funcionalidades Atuais
+- **Logs**: O sistema de logs mencionado na documentação não está implementado no código atual
+- **Histórico**: Não há registro persistente de downloads realizados
+- **Playlists**: Suporte limitado - a aplicação processa mas pode ter comportamento inconsistente
+- **Timeout**: Conversões têm limite de 5 minutos (300 segundos)
+
+### Limitações Técnicas
+- **Dependências externas**: Requer yt-dlp.exe e ffmpeg.exe
+- **Interface única**: Apenas uma operação por vez (download ou conversão)
+- **Qualidades fixas**: Lista pré-definida de qualidades, não adaptativa por vídeo
+- **Formatos limitados**: Suporte apenas aos formatos listados nas opções
 
 ## 📁 Estrutura do Projeto
 ```
@@ -105,13 +129,6 @@ YouTube Downloader/
 └── [Arquivos necessários para execução - não incluídos no repositório]
     ├── ffmpeg.exe          # Ferramenta de processamento de áudio/vídeo
     └── yt-dlp.exe          # Motor de download de vídeos
-```
-
-### Estrutura de Logs (criada automaticamente)
-```
-~/Downloads/YouTubeDownloader_Logs/
-├── youtube_downloader.log  # Log principal da aplicação
-└── download_history.txt    # Histórico de downloads realizados
 ```
 
 **Nota**: Os arquivos ffmpeg.exe e yt-dlp.exe precisam ser baixados separadamente devido às limitações de tamanho do GitHub. A aplicação busca automaticamente no PATH do sistema se não encontrar localmente.
@@ -128,16 +145,31 @@ YouTube Downloader/
 - **"Dependências não encontradas"**: Baixe yt-dlp.exe e ffmpeg.exe e coloque na pasta da aplicação
 - **"Sem permissão para escrever"**: Execute como administrador ou escolha outra pasta
 - **"URL inválida"**: Verifique se a URL é do YouTube e está completa
-- **Download travado**: Verifique os logs em `~/Downloads/YouTubeDownloader_Logs/`
+- **Vídeos com falha**: Verifique o relatório detalhado de falhas que aparece automaticamente
+- **Conversão travada**: Aguarde até 5 minutos ou cancele a operação
 
-### Logs e Debugging
-Todos os erros e operações são registrados automaticamente. Em caso de problemas:
-1. Verifique os logs em `~/Downloads/YouTubeDownloader_Logs/youtube_downloader.log`
-2. O arquivo contém informações detalhadas sobre erros e operações
-3. Use essas informações para identificar e resolver problemas
+### Problemas Específicos do YouTube
+A aplicação detecta e relata automaticamente:
+- **Vídeos privados**: Não acessíveis publicamente
+- **Vídeos removidos**: Excluídos pelo autor ou YouTube
+- **Bloqueio regional**: Não disponíveis em sua região
+- **Restrição de idade**: Requerem login para confirmação
+- **Direitos autorais**: Bloqueados por questões de copyright
+
+### Debugging
+- A aplicação mostra erros em tempo real na interface
+- Relatórios detalhados são exibidos automaticamente quando há falhas
+- Para problemas técnicos, verifique se as dependências estão atualizadas
 
 ## 🤝 Contribuições
 Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue ou enviar um pull request.
+
+### Áreas para Melhoria
+- Implementação do sistema de logs
+- Histórico persistente de downloads  
+- Melhor suporte para playlists
+- Detecção automática de qualidades disponíveis
+- Interface para múltiplas operações simultâneas
 
 1. Fork o projeto
 2. Crie sua Feature Branch (`git checkout -b feature/AmazingFeature`)
