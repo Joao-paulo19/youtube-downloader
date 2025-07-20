@@ -10,12 +10,10 @@ Uma aplicação desktop portátil para download de vídeos e áudios do YouTube,
 - 📊 Barra de progresso em tempo real
 - 💻 Interface intuitiva com abas organizadas
 - 📦 Aplicação completamente portátil
-- 🛡️ Sistema robusto de tratamento de erros
 - 🔍 Detecção automática de downloads duplicados
 - ✅ Validação automática de dependências
 - 🔒 Validação de URLs para segurança
 - ❌ Cancelamento de downloads em andamento
-- 📝 Relatórios detalhados de falhas específicas do YouTube
 
 ## 📋 Pré-requisitos
 **Para desenvolvimento:**
@@ -97,10 +95,7 @@ O executável será criado na pasta `dist/YouTube Downloader/`.
 Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue ou enviar um pull request.
 
 ### Áreas para Melhoria
-- Melhor suporte para playlists
-- Detecção automática de qualidades disponíveis
 - Interface para múltiplas operações simultâneas
-- Histórico de downloads
 
 1. Fork o projeto
 2. Crie sua Feature Branch (`git checkout -b feature/AmazingFeature`)
