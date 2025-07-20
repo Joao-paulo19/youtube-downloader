@@ -1,5 +1,5 @@
 # YouTube Downloader
-Uma aplicação desktop portátil para download de vídeos e áudios do YouTube, com interface gráfica amigável e sistema robusto de tratamento de erros.
+Uma aplicação desktop portátil para download de vídeos e áudios do YouTube, com interface gráfica.
 
 ![Screenshot da aplicação](screenshot1.png)
 
