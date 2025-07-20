@@ -76,26 +76,6 @@ O executável será criado na pasta `dist/YouTube Downloader/`.
 - **Progresso**: Acompanhe o progresso em tempo real através da barra de progresso
 - **Duplicatas**: A aplicação detecta automaticamente downloads duplicados e oferece opções
 
-## ⚠️ Limitações Conhecidas
-- **Interface única**: Apenas uma operação por vez (download)
-- **Dependências externas**: Requer yt-dlp.exe e ffmpeg.exe
-- **Qualidades fixas**: Lista pré-definida de qualidades, não adaptativa por vídeo
-- **Formatos limitados**: Suporte apenas aos formatos listados nas opções
-
-## 📁 Estrutura do Projeto
-```
-YouTube Downloader/
-├── icon.ico                # Ícone da aplicação
-├── readme.md               # Este arquivo
-├── screenshot.png          # Captura de tela da aplicação
-├── youtube_downloader.py   # Código-fonte principal
-├── youtube_downloader.spec # Arquivo de configuração do PyInstaller
-├── .gitignore              # Arquivos ignorados pelo Git
-└── [Arquivos necessários para execução - não incluídos no repositório]
-    ├── ffmpeg.exe          # Ferramenta de processamento de áudio/vídeo
-    └── yt-dlp.exe          # Motor de download de vídeos
-```
-
 **Nota**: Os arquivos ffmpeg.exe e yt-dlp.exe precisam ser baixados separadamente devido às limitações de tamanho do GitHub. A aplicação busca automaticamente no PATH do sistema se não encontrar localmente.
 
 ## 🛠️ Tecnologias Utilizadas
