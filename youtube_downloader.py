@@ -28,8 +28,6 @@ class YouTubeDownloader:
         self.qualidade_audio_var = tk.StringVar()
         self.formato_audio_var = tk.StringVar(value="mp3")
         self.modo_download_var = tk.StringVar(value="video")
-        self.arquivo_conversao_var = tk.StringVar()
-        self.formato_conversao_var = tk.StringVar(value="mp3")
 
         self.processo_ativo = None  # Para controlar o processo ativo
         self.cancelar_download = False  # Flag para cancelamento
@@ -58,7 +56,7 @@ class YouTubeDownloader:
         self.mapeamento_qualidade_video = {
             "Melhor qualidade": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
             "1080p (Full HD)": "137+140/bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best[height<=1080]",
-            "720p (HD)": "22/136+140/bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best[height<=720]",
+            "720p (HD)": "22",
             "480p (SD)": "135+140/bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best[height<=480]",
             "360p (SD Baixa)": "18/134+140/bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]/best[height<=360]",
             "240p (Baixa)": "133+140/bestvideo[height<=240][ext=mp4]+bestaudio[ext=m4a]/best[height<=240][ext=mp4]/best[height<=240]",
@@ -127,7 +125,8 @@ class YouTubeDownloader:
             r'youtube\.com/playlist\?list=',
             r'youtu\.be/',
             r'youtube\.com/channel/',
-            r'youtube\.com/user/'
+            r'youtube\.com/user/',
+            r'youtube\.com/live/'
         ]
 
         for padrao in padroes_youtube:
@@ -190,14 +189,9 @@ class YouTubeDownloader:
             self.aba_audio = ttk.Frame(self.notebook, padding=10)
             self.notebook.add(self.aba_audio, text="Download de Áudio")
 
-            # Aba para conversão de áudio
-            self.aba_conversao = ttk.Frame(self.notebook, padding=10)
-            self.notebook.add(self.aba_conversao, text="Conversão de Áudio")
-
             # Configurar abas
             self.configurar_aba_video()
             self.configurar_aba_audio()
-            self.configurar_aba_conversao()
 
             # Frame para pasta de destino
             pasta_frame = ttk.Frame(main_frame)
@@ -305,50 +299,6 @@ class YouTubeDownloader:
             messagebox.showerror(
                 "Erro", f"Erro ao configurar aba de áudio: {e}")
 
-    def configurar_aba_conversao(self):
-        """Configura os widgets da aba de conversão"""
-        try:
-            # Widgets para conversão
-            arquivo_frame = ttk.Frame(self.aba_conversao)
-            arquivo_frame.pack(fill=tk.X, pady=10)
-
-            ttk.Label(arquivo_frame, text="Arquivo de áudio:").pack(
-                side=tk.LEFT, padx=(0, 10))
-            ttk.Entry(arquivo_frame, textvariable=self.arquivo_conversao_var, width=40).pack(
-                side=tk.LEFT, fill=tk.X, expand=True)
-            ttk.Button(arquivo_frame, text="Selecionar...", command=self.selecionar_arquivo_audio).pack(
-                side=tk.LEFT, padx=(10, 0))
-
-            # Formato para conversão
-            formato_frame = ttk.Frame(self.aba_conversao)
-            formato_frame.pack(fill=tk.X, pady=10)
-
-            ttk.Label(formato_frame, text="Converter para:").pack(
-                side=tk.LEFT, padx=(0, 10))
-            formatos = ["mp3", "m4a", "wav", "opus", "flac", "aac"]
-            ttk.Combobox(formato_frame, textvariable=self.formato_conversao_var,
-                         values=formatos, width=10, state="readonly").pack(side=tk.LEFT)
-
-            # Botão de conversão
-            botao_frame = ttk.Frame(self.aba_conversao)
-            botao_frame.pack(fill=tk.X, pady=10)
-
-            ttk.Button(botao_frame, text="Converter",
-                       command=self.converter_audio, width=20).pack(side=tk.RIGHT)
-
-            # Informações
-            info_frame = ttk.Frame(self.aba_conversao)
-            info_frame.pack(fill=tk.X, pady=10)
-
-            info_text = ("Esta função converte arquivos de áudio entre diferentes formatos.\n"
-                         "Selecione um arquivo e escolha o formato de saída desejado.")
-
-            ttk.Label(info_frame, text=info_text, wraplength=500,
-                      justify=tk.LEFT).pack(fill=tk.X)
-        except Exception as e:
-            messagebox.showerror(
-                "Erro", f"Erro ao configurar aba de conversão: {e}")
-
     def alternar_modo(self):
         """Alterna entre o modo de download de vídeo e áudio, mostrando apenas abas relevantes"""
         try:
@@ -363,10 +313,8 @@ class YouTubeDownloader:
                 self.notebook.add(self.aba_video, text="Download de Vídeo")
                 self.notebook.select(self.aba_video)
             else:
-                # Adicionar abas de áudio e conversão
+                # Adicionar aba de áudio
                 self.notebook.add(self.aba_audio, text="Download de Áudio")
-                self.notebook.add(self.aba_conversao,
-                                  text="Conversão de Áudio")
                 self.notebook.select(self.aba_audio)
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao alternar modo: {e}")
@@ -439,18 +387,6 @@ class YouTubeDownloader:
 
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao cancelar operação: {e}")
-
-    def selecionar_arquivo_audio(self):
-        """Abre diálogo para selecionar arquivo de áudio para conversão"""
-        try:
-            formatos = [("Arquivos de áudio", "*.mp3 *.m4a *.opus *.webm *.wav *.flac *.aac"),
-                        ("Todos os arquivos", "*.*")]
-            arquivo = filedialog.askopenfilename(filetypes=formatos,
-                                                 initialdir=self.pasta_destino_var.get())
-            if arquivo:
-                self.arquivo_conversao_var.set(arquivo)
-        except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao selecionar arquivo: {e}")
 
     def iniciar_download(self):
         """Inicia o processo de download em uma thread separada"""
@@ -558,7 +494,7 @@ class YouTubeDownloader:
             else:
                 qualidade = self.qualidade_audio_var.get()
                 formato_audio = self.formato_audio_var.get()
-                formato = "worst[ext=webm]/worst[ext=mp4]/worst"
+                formato = "bestaudio/best"
                 comando.extend([
                     "-f", formato,
                     "--extract-audio",
@@ -815,100 +751,6 @@ class YouTubeDownloader:
             import time
             timestamp = int(time.time())
             return f"{nome_base}_{timestamp}.{extensao}"
-
-    def converter_audio(self):
-        """Converte um arquivo de áudio para outro formato"""
-        try:
-            arquivo_origem = self.arquivo_conversao_var.get()
-            formato_destino = self.formato_conversao_var.get()
-
-            if not arquivo_origem or not os.path.isfile(arquivo_origem):
-                messagebox.showerror(
-                    "Erro", "Selecione um arquivo de áudio válido.")
-                return
-
-            # Verificar se o arquivo é acessível
-            if not os.access(arquivo_origem, os.R_OK):
-                messagebox.showerror(
-                    "Erro", "Sem permissão para ler o arquivo selecionado.")
-                return
-
-            # Gerar nome do arquivo de saída
-            nome_base = os.path.splitext(arquivo_origem)[0]
-            arquivo_destino = f"{nome_base}.{formato_destino}"
-
-            # Verificar se o arquivo de saída já existe
-            if os.path.exists(arquivo_destino):
-                if not messagebox.askyesno("Confirmar", f"O arquivo {os.path.basename(arquivo_destino)} já existe. Deseja substituí-lo?"):
-                    return
-
-            # Verificar se há espaço suficiente no disco
-            pasta_destino = os.path.dirname(arquivo_destino)
-            if not os.access(pasta_destino, os.W_OK):
-                messagebox.showerror(
-                    "Erro", "Sem permissão de escrita na pasta de destino.")
-                return
-
-            # Atualizar interface
-            self.progresso_label.config(text="Convertendo áudio...")
-            self.barra_progresso["value"] = 30
-            self.root.update()
-
-            # Caminho do ffmpeg
-            ffmpeg_exe = self.recurso_caminho("ffmpeg.exe")
-            if not ffmpeg_exe:
-                raise Exception("FFmpeg não encontrado")
-
-            # Comando para conversão
-            comando = [
-                ffmpeg_exe,
-                "-i", arquivo_origem,
-                "-y",  # Sobrescrever arquivo se existir
-                "-loglevel", "error",  # Reduzir verbosidade
-                arquivo_destino
-            ]
-
-            # Executar conversão
-            processo = subprocess.run(
-                comando,
-                check=True,
-                capture_output=True,
-                text=True,
-                timeout=300,  # Timeout de 5 minutos
-                creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
-            )
-
-            # Verificar se o arquivo foi criado
-            if not os.path.exists(arquivo_destino):
-                raise Exception("Arquivo de saída não foi criado")
-
-            # Atualizar interface após conclusão
-            self.progresso_label.config(text="Conversão concluída!")
-            self.barra_progresso["value"] = 100
-            messagebox.showinfo(
-                "Sucesso", f"Arquivo convertido com sucesso para {formato_destino}!")
-
-        except subprocess.TimeoutExpired:
-            self.progresso_label.config(text="Timeout na conversão.")
-            messagebox.showerror(
-                "Erro", "Timeout durante a conversão do áudio.")
-        except subprocess.CalledProcessError as e:
-            self.progresso_label.config(text="Erro na conversão.")
-            erro_msg = e.stderr if e.stderr else str(e)
-            messagebox.showerror("Erro", f"Falha na conversão: {erro_msg}")
-        except FileNotFoundError:
-            self.progresso_label.config(text="FFmpeg não encontrado.")
-            messagebox.showerror(
-                "Erro", "FFmpeg não encontrado. Verifique se está instalado.")
-        except PermissionError as e:
-            self.progresso_label.config(text="Erro de permissão.")
-            messagebox.showerror("Erro", f"Erro de permissão: {e}")
-        except Exception as e:
-            self.progresso_label.config(text="Erro na conversão.")
-            messagebox.showerror("Erro", f"Ocorreu um erro: {str(e)}")
-        finally:
-            # Resetar progresso após um tempo
-            self.root.after(3000, lambda: self.barra_progresso.config(value=0))
 
 # Função principal
 
