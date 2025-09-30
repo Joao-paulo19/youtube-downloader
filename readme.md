@@ -57,10 +57,10 @@ Uma aplicação desktop portátil para download de vídeos e áudios do YouTube,
 
 python youtube\_downloader.py
 
-```
+````
 
 ### Criando o executável
-```
+````
 
 pyinstaller youtube\_downloader.spec
 
