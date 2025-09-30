@@ -141,7 +141,7 @@ Se os passos acima não resolverem, execute o download manualmente pelo terminal
 
 yt-dlp.exe -f "bestvideo+bestaudio" "URL\_DO\_SEU\_VIDEO"
 
-```
+````
 A mensagem de erro detalhada que aparecer no terminal ajudará a identificar a causa raiz do problema.
 
 ## 🤝 Contribuições
