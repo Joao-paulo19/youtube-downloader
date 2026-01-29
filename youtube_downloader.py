@@ -17,7 +17,7 @@ class YouTubeDownloader:
         # Configuração principal da janela
         self.root = root
         self.root.title("YouTube Downloader")
-        self.root.geometry("640x600")
+        self.root.geometry("640x650")
         self.root.configure(bg="#f0f0f0")
         self.root.resizable(True, True)
 
@@ -28,23 +28,25 @@ class YouTubeDownloader:
         self.qualidade_audio_var = tk.StringVar()
         self.formato_audio_var = tk.StringVar(value="mp3")
         self.modo_download_var = tk.StringVar(value="video")
+        self.modo_emulacao_var = tk.StringVar(
+            value="padrão")  # NOVO: Modo de emulação
 
         self.processo_ativo = None  # Para controlar o processo ativo
         self.cancelar_download = False  # Flag para cancelamento
 
-        # Disponibiliza qualidades de vídeo comuns como padrão
+        # MODIFICAÇÃO 2: Qualidades puramente técnicas e numéricas
         self.qualidades_video_padrao = [
-            "Melhor qualidade",
+            "2160p (4K)",
+            "1440p (2K)",
             "1080p (Full HD)",
             "720p (HD)",
             "480p (SD)",
-            "360p (SD Baixa)",
-            "240p (Baixa)",
-            "144p (Muito Baixa)"
+            "360p",
+            "240p",
+            "144p"
         ]
 
         self.qualidades_audio_padrao = [
-            "Melhor qualidade",
             "320kbps",
             "256kbps",
             "192kbps",
@@ -52,29 +54,31 @@ class YouTubeDownloader:
             "96kbps"
         ]
 
-        # Mapeamento de qualidades para códigos do yt-dlp
+        # MODIFICAÇÃO 2: Mapeamento técnico de qualidades para filtros de altura
         self.mapeamento_qualidade_video = {
-            "Melhor qualidade": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-            "1080p (Full HD)": "137+140/bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best[height<=1080]",
-            "720p (HD)": "22",
-            "480p (SD)": "135+140/bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best[height<=480]",
-            "360p (SD Baixa)": "18/134+140/bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]/best[height<=360]",
-            "240p (Baixa)": "133+140/bestvideo[height<=240][ext=mp4]+bestaudio[ext=m4a]/best[height<=240][ext=mp4]/best[height<=240]",
-            "144p (Muito Baixa)": "160+140/bestvideo[height<=144][ext=mp4]+bestaudio[ext=m4a]/best[height<=144][ext=mp4]/best[height<=144]"
+            "2160p (4K)": "bestvideo[height<=2160][ext=mp4]+bestaudio[ext=m4a]/best[height<=2160][ext=mp4]/best[height<=2160]",
+            "1440p (2K)": "bestvideo[height<=1440][ext=mp4]+bestaudio[ext=m4a]/best[height<=1440][ext=mp4]/best[height<=1440]",
+            "1080p (Full HD)": "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best[height<=1080]",
+            "720p (HD)": "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best[height<=720]",
+            "480p (SD)": "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best[height<=480]",
+            "360p": "bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]/best[height<=360]",
+            "240p": "bestvideo[height<=240][ext=mp4]+bestaudio[ext=m4a]/best[height<=240][ext=mp4]/best[height<=240]",
+            "144p": "bestvideo[height<=144][ext=mp4]+bestaudio[ext=m4a]/best[height<=144][ext=mp4]/best[height<=144]"
         }
 
         self.mapeamento_qualidade_audio = {
-            "Melhor qualidade": "worst[ext=webm]/worst[ext=mp4]/worst",
-            "320kbps": "worst[ext=webm]/worst[ext=mp4]/worst",
-            "256kbps": "worst[ext=webm]/worst[ext=mp4]/worst",
-            "192kbps": "worst[ext=webm]/worst[ext=mp4]/worst",
-            "128kbps": "worst[ext=webm]/worst[ext=mp4]/worst",
-            "96kbps": "worst[ext=webm]/worst[ext=mp4]/worst"
+            "320kbps": "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio",
+            "256kbps": "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio",
+            "192kbps": "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio",
+            "128kbps": "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio",
+            "96kbps": "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio"
         }
 
         # Inicializar valores padrão
-        self.qualidade_video_var.set(self.qualidades_video_padrao[0])
-        self.qualidade_audio_var.set(self.qualidades_audio_padrao[0])
+        self.qualidade_video_var.set(
+            self.qualidades_video_padrao[2])  # 1080p como padrão
+        self.qualidade_audio_var.set(
+            self.qualidades_audio_padrao[0])  # 320kbps como padrão
 
         # Verificar dependências
         if not self.verificar_dependencias():
@@ -166,6 +170,19 @@ class YouTubeDownloader:
                 url_frame, textvariable=self.url_var, width=50)
             self.entry_url.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
+            # MODIFICAÇÃO 1: Seletor de modo de emulação
+            emulacao_frame = ttk.Frame(main_frame)
+            emulacao_frame.pack(fill=tk.X, pady=10)
+
+            ttk.Label(emulacao_frame, text="Modo de Emulação:").pack(
+                side=tk.LEFT, padx=(0, 10))
+            modos_emulacao = ["padrão", "android_vr",
+                              "ios", "android", "web_safari"]
+            self.combo_emulacao = ttk.Combobox(emulacao_frame, textvariable=self.modo_emulacao_var,
+                                               values=modos_emulacao, width=15, state="readonly")
+            self.combo_emulacao.pack(side=tk.LEFT)
+            self.combo_emulacao.current(0)
+
             # Modo de download (vídeo ou áudio)
             modo_frame = ttk.Frame(main_frame)
             modo_frame.pack(fill=tk.X, pady=10)
@@ -245,14 +262,14 @@ class YouTubeDownloader:
             self.combo_qualidade_video = ttk.Combobox(qualidade_frame, textvariable=self.qualidade_video_var,
                                                       values=self.qualidades_video_padrao, width=25, state="readonly")
             self.combo_qualidade_video.pack(side=tk.LEFT)
-            self.combo_qualidade_video.current(0)
+            self.combo_qualidade_video.current(2)  # 1080p como padrão
 
             # Informações
             info_frame = ttk.Frame(self.aba_video)
             info_frame.pack(fill=tk.X, pady=10)
 
-            info_text = ("Este modo baixa vídeos do YouTube na qualidade selecionada.\n"
-                         "Selecione 'Melhor qualidade' para obter a melhor resolução disponível.")
+            info_text = ("Selecione a resolução desejada para o download.\n"
+                         "Resoluções maiores oferecem melhor qualidade mas ocupam mais espaço.")
 
             ttk.Label(info_frame, text=info_text, wraplength=500,
                       justify=tk.LEFT).pack(fill=tk.X)
@@ -401,7 +418,7 @@ class YouTubeDownloader:
                 if not messagebox.askyesno("Aviso", "A URL não parece ser do YouTube. Deseja continuar mesmo assim?"):
                     return
 
-            # Verificar duplicatas
+            # PRESERVAÇÃO: Verificar duplicatas (mantida lógica original)
             eh_duplicata, motivo = self.verificar_duplicatas(url, self.modo_download_var.get(),
                                                              self.qualidade_video_var.get() if self.modo_download_var.get() == "video"
                                                              else self.qualidade_audio_var.get())
@@ -441,7 +458,7 @@ class YouTubeDownloader:
             self.progresso_label.config(text="Iniciando download...")
             self.barra_progresso["value"] = 0
 
-            # Iniciar download em uma thread separada
+            # PRESERVAÇÃO: Iniciar download em uma thread separada
             threading.Thread(target=self.executar_download,
                              daemon=True).start()
 
@@ -473,6 +490,7 @@ class YouTubeDownloader:
                                                         self.qualidade_video_var.get() if modo == "video"
                                                         else self.qualidade_audio_var.get())
 
+            # PRESERVAÇÃO: Comando base mantido com CREATE_NO_WINDOW
             comando = [
                 yt_dlp_exe,
                 "--ffmpeg-location", ffmpeg_exe,
@@ -482,31 +500,50 @@ class YouTubeDownloader:
                 "--restrict-filenames",
                 "--no-warnings",
                 "--progress",
-                "--newline",
-                url
+                "--newline"
             ]
 
+            # MODIFICAÇÃO 3: Medidas de comportamento humano (Anti-Bot)
+            comando.extend([
+                "--limit-rate", "7M",           # Limitador de taxa
+                "--sleep-requests", "1.5",      # Intervalo entre requisições
+                "--socket-timeout", "30"        # Timeout de socket
+            ])
+
+            # MODIFICAÇÃO 1: Emulação de cliente (Vacina Anti-403)
+            modo_emulacao = self.modo_emulacao_var.get()
+            if modo_emulacao != "padrão":
+                comando.extend([
+                    "--extractor-args", f"youtube:player_client={modo_emulacao}"
+                ])
+
+            # Adicionar URL no final
+            comando.append(url)
+
+            # PRESERVAÇÃO: Lógica de formato mantida
             if modo == "video":
                 qualidade = self.qualidade_video_var.get()
                 formato = self.mapeamento_qualidade_video.get(
-                    qualidade, "bestvideo+bestaudio/best")
-                comando.extend(["-f", formato])
+                    qualidade, "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080]")
+                comando.insert(-1, "-f")
+                comando.insert(-1, formato)
             else:
                 qualidade = self.qualidade_audio_var.get()
                 formato_audio = self.formato_audio_var.get()
                 formato = "bestaudio/best"
-                comando.extend([
-                    "-f", formato,
-                    "--extract-audio",
-                    "--audio-format", formato_audio,
-                    "--audio-quality", "0"
-                ])
+                comando.insert(-1, "-f")
+                comando.insert(-1, formato)
+                comando.insert(-1, "--extract-audio")
+                comando.insert(-1, "--audio-format")
+                comando.insert(-1, formato_audio)
+                comando.insert(-1, "--audio-quality")
+                comando.insert(-1, "0")
 
             self.root.after(
                 0, lambda: self.progresso_label.config(text="Baixando..."))
             self.root.after(0, lambda: self.barra_progresso.config(value=10))
 
-            # Lista para armazenar falhas do YouTube
+            # PRESERVAÇÃO: Lista para armazenar falhas do YouTube
             falhas_youtube = []
             titulo_atual = "Desconhecido"
 
@@ -524,9 +561,12 @@ class YouTubeDownloader:
                 (r'Copyright', 'Bloqueio por direitos autorais'),
                 (r'This video contains content', 'Conteúdo restrito'),
                 (r'region', 'Bloqueio regional'),
-                (r'country', 'Bloqueio por país')
+                (r'country', 'Bloqueio por país'),
+                (r'HTTP Error 403', 'Erro 403: Acesso negado'),
+                (r'Forbidden', 'Acesso proibido')
             ]
 
+            # PRESERVAÇÃO: subprocess.Popen com CREATE_NO_WINDOW
             self.processo_ativo = subprocess.Popen(
                 comando,
                 stdout=subprocess.PIPE,
@@ -538,7 +578,7 @@ class YouTubeDownloader:
             )
 
             for linha in self.processo_ativo.stdout:
-                # Verificar cancelamento
+                # PRESERVAÇÃO: Verificar cancelamento
                 if self.cancelar_download:
                     self.processo_ativo.terminate()
                     self.root.after(0, lambda: self.progresso_label.config(
@@ -581,7 +621,7 @@ class YouTubeDownloader:
 
             codigo_saida = self.processo_ativo.wait()
 
-            # Resultado final
+            # PRESERVAÇÃO: Resultado final com lógica original
             if codigo_saida == 0:
                 if falhas_youtube:
                     self.root.after(0, lambda: self.progresso_label.config(
@@ -675,7 +715,7 @@ class YouTubeDownloader:
             print(f"Erro ao atualizar progresso: {e}")
 
     def verificar_duplicatas(self, url, modo, qualidade):
-        """Verifica se o download já foi feito anteriormente"""
+        """PRESERVAÇÃO: Verifica se o download já foi feito anteriormente (baseado no ID de 11 caracteres)"""
         try:
             pasta_destino = self.pasta_destino_var.get()
 
@@ -704,7 +744,7 @@ class YouTubeDownloader:
             return False, f"Erro na verificação: {e}"
 
     def verificar_arquivos_existentes(self, video_id, pasta_destino):
-        """Verifica se existem arquivos do vídeo na pasta de destino"""
+        """PRESERVAÇÃO: Verifica se existem arquivos do vídeo na pasta de destino"""
         arquivos_encontrados = []
         try:
             for arquivo in os.listdir(pasta_destino):
