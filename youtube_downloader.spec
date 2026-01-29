@@ -46,5 +46,5 @@ coll = COLLECT(
     a.datas,
     strip=False,
     upx=True,
-    name='YouTube Downloader Pro'  # Nome da pasta que será gerada em /dist
+    name='YouTube Downloader'  # Nome da pasta que será gerada em /dist
 )
