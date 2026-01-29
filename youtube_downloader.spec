@@ -6,11 +6,12 @@ from PyInstaller.utils.hooks import collect_submodules
 block_cipher = None
 
 a = Analysis(
-    ['youtube_downloader.py'],  # Nome do arquivo principal (ajuste se necessário)
+    ['youtube_downloader.py'],  # certifique-se que o nome do arquivo está correto aqui
     pathex=[],
     binaries=[
-        ('yt-dlp.exe', '.'),     # inclui yt-dlp na mesma pasta
-        ('ffmpeg.exe', '.'),     # inclui ffmpeg na mesma pasta
+        ('yt-dlp.exe', '.'),     # Motor de download
+        ('ffmpeg.exe', '.'),     # Motor de conversão/fusão de áudio e vídeo
+        ('deno.exe', '.'),       # NOVO: Motor JS para contornar o Erro 403 (SABR)
     ],
     datas=[],
     hiddenimports=collect_submodules('tkinter'),
@@ -29,13 +30,13 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='YouTube Downloader',  # Nome do executável
+    name='YouTube Downloader',  # Nome do arquivo .exe final
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False,  # esconde o cmd
-    icon='icon.ico' if os.path.exists('icon.ico') else None  # opcional: ícone .ico
+    console=False,  # Mantido False para não abrir o terminal preto
+    icon='icon.ico' if os.path.exists('icon.ico') else None
 )
 
 coll = COLLECT(
@@ -45,5 +46,5 @@ coll = COLLECT(
     a.datas,
     strip=False,
     upx=True,
-    name='YouTube Downloader'  # Nome da pasta da aplicação
+    name='YouTube Downloader Pro'  # Nome da pasta que será gerada em /dist
 )
