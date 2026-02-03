@@ -57,12 +57,10 @@ O sistema possui abas e quadros que permitem contornar as travas do YouTube:
 
 O download agora funciona com um **fluxo inteligente**: o programa tenta o download direto primeiro; se o YouTube bloquear, ele aciona as camadas que você marcar: 
 
-* 
-**Camada 1 (PoToken):** Usa o `deno.exe` para gerar chaves de anonimato que provam ao YouTube que você é um visitante "íntegro". 
+* **Camada 1 (PoToken):** Usa o `deno.exe` para gerar chaves de anonimato que provam ao YouTube que você é um visitante "íntegro". 
 
 
-* 
-**Camada 2 (Proxies):** O programa busca automaticamente uma lista de IPs pelo mundo para "disfarçar" sua conexão. 
+* **Camada 2 (Proxies):** O programa busca automaticamente uma lista de IPs pelo mundo para "disfarçar" sua conexão. 
 
 
 * **Camada 3 (Cookies):** Permite usar o login do seu navegador (Brave, Chrome, Firefox, etc.) para validar o acesso. **Dica:** O navegador deve estar fechado para esta camada funcionar. 
@@ -79,8 +77,7 @@ Permite personalizar como o programa se comporta na internet:
 * **Intervalo (s):** Tempo de espera entre pedidos. Ajuda a não ser banido como robô. 
 
 
-* 
-**Timeout (s):** Tempo que o programa espera a resposta do servidor antes de desistir. 
+* **Timeout (s):** Tempo que o programa espera a resposta do servidor antes de desistir. 
 
 
 
@@ -108,8 +105,7 @@ O programa finalizado aparecerá na pasta `dist/YouTube Downloader/`.
 * **Vídeo sem som no player do Windows:** O player "Filmes e TV" nativo às vezes não tem os codecs modernos. O sistema agora força o áudio em **AAC** para aumentar a compatibilidade, mas recomendamos o uso do **VLC Media Player**. 
 
 
-* 
-**Erro 403 Persistente:** Tente atualizar o motor de download rodando `yt-dlp.exe -U` no CMD dentro da pasta do programa. 
+* **Erro 403 Persistente:** Tente atualizar o motor de download rodando `yt-dlp.exe -U` no CMD dentro da pasta do programa. 
 
 
 * **Sistema de Logs:** Sempre que ocorrer um erro, o programa perguntará se deseja salvar um log. Esse arquivo contém todos os detalhes técnicos (URL, Camada usada, Proxy) para facilitar o diagnóstico. 
